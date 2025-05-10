@@ -1,16 +1,30 @@
 FROM debian:bullseye-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
 ENV JAVA_DIR=/opt/java
-ENV PATH=$JAVA_DIR/java17/bin:$PATH
 
-RUN apt-get update && apt-get install -y curl tar bash ca-certificates tzdata iproute2 && \
-    mkdir -p $JAVA_DIR
+RUN apt-get update &&     apt-get install -y curl ca-certificates tar bash tzdata &&     mkdir -p ${JAVA_DIR}
+
+# Java 8
+RUN curl -L -o /tmp/java8.tar.gz https://github.com/adoptium/temurin8-binaries/releases/latest/download/OpenJDK8U-jdk_aarch64_linux_hotspot.tar.gz &&     mkdir -p ${JAVA_DIR}/java8 &&     tar -xzf /tmp/java8.tar.gz --strip-components=1 -C ${JAVA_DIR}/java8 &&     rm /tmp/java8.tar.gz
+
+# Java 11
+RUN curl -L -o /tmp/java11.tar.gz https://github.com/adoptium/temurin11-binaries/releases/latest/download/OpenJDK11U-jdk_aarch64_linux_hotspot.tar.gz &&     mkdir -p ${JAVA_DIR}/java11 &&     tar -xzf /tmp/java11.tar.gz --strip-components=1 -C ${JAVA_DIR}/java11 &&     rm /tmp/java11.tar.gz
+
+# Java 16
+RUN curl -L -o /tmp/java16.tar.gz https://github.com/adoptium/temurin16-binaries/releases/latest/download/OpenJDK16U-jdk_aarch64_linux_hotspot.tar.gz &&     mkdir -p ${JAVA_DIR}/java16 &&     tar -xzf /tmp/java16.tar.gz --strip-components=1 -C ${JAVA_DIR}/java16 &&     rm /tmp/java16.tar.gz
+
+# Java 17
+RUN curl -L -o /tmp/java17.tar.gz https://github.com/adoptium/temurin17-binaries/releases/latest/download/OpenJDK17U-jdk_aarch64_linux_hotspot.tar.gz &&     mkdir -p ${JAVA_DIR}/java17 &&     tar -xzf /tmp/java17.tar.gz --strip-components=1 -C ${JAVA_DIR}/java17 &&     rm /tmp/java17.tar.gz
+
+# Java 21
+RUN curl -L -o /tmp/java21.tar.gz https://github.com/adoptium/temurin21-binaries/releases/latest/download/OpenJDK21U-jdk_aarch64_linux_hotspot.tar.gz &&     mkdir -p ${JAVA_DIR}/java21 &&     tar -xzf /tmp/java21.tar.gz --strip-components=1 -C ${JAVA_DIR}/java21 &&     rm /tmp/java21.tar.gz
+
+# Java 22
+RUN curl -L -o /tmp/java22.tar.gz https://github.com/adoptium/temurin22-binaries/releases/latest/download/OpenJDK22U-jdk_aarch64_linux_hotspot.tar.gz &&     mkdir -p ${JAVA_DIR}/java22 &&     tar -xzf /tmp/java22.tar.gz --strip-components=1 -C ${JAVA_DIR}/java22 &&     rm /tmp/java22.tar.gz
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN useradd -d /home/container -m container
-USER container
-WORKDIR /home/container
-
+WORKDIR /mnt/server
 ENTRYPOINT ["/entrypoint.sh"]
