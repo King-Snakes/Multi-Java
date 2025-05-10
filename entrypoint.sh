@@ -1,17 +1,20 @@
 #!/bin/bash
 set -e
 
-# Optional: show all installed Java versions
-echo "Installed Java versions:"
-ls -1 /opt/java || true
-
-# Use egg script or override in server logic
-if [ -z "${STARTUP}" ]; then
-  echo "STARTUP variable is not set."
-  exit 1
+# Apply correct Java version from .javaver if it exists
+if [[ -f .javaver ]]; then
+    export JAVA_HOME="/opt/java/java$(cat .javaver)"
+    export PATH="$JAVA_HOME/bin:$PATH"
+    echo "Activated JAVA_HOME: $JAVA_HOME"
+    java -version
 fi
 
-# Parse variables in STARTUP
+# Check startup string
+if [ -z "${STARTUP}" ]; then
+    echo "STARTUP variable is not set."
+    exit 1
+fi
+
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 echo "Running startup command:"
 echo "${PARSED}"
