@@ -4,14 +4,15 @@ LABEL author="King-Snakes" maintainer="MexicanKingSnakes@gmail.com"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV JAVA_DIR=/opt/java
 
-# Install dependencies and create container user
+# Install all dependencies
 RUN apt-get update -y && apt-get install -y \
     bash lsof curl jq unzip tar file ca-certificates openssl git \
     sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 && \
-    mkdir -p /opt/java && useradd -m -d /home/container container
+    mkdir -p /opt/java && \
+    useradd -m -d /home/container container
 
 # Java 8
-RUN curl -fsSL -o /tmp/java8.tar.gz https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u392b08.tar.gz && \
+RUN curl -fsSL -o /tmp/java8.tar.gz https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_aarch64_linux_hotspot_8u402b06.tar.gz && \
     mkdir -p /opt/java/java8 && \
     tar -xzf /tmp/java8.tar.gz --strip-components=1 -C /opt/java/java8 && \
     rm /tmp/java8.tar.gz
@@ -46,10 +47,10 @@ RUN curl -fsSL -o /tmp/java22.tar.gz https://github.com/adoptium/temurin22-binar
     tar -xzf /tmp/java22.tar.gz --strip-components=1 -C /opt/java/java22 && \
     rm /tmp/java22.tar.gz
 
-# Final setup
-USER container
-ENV USER=container HOME=/home/container
 WORKDIR /home/container
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+USER container
+ENV USER=container HOME=/home/container
 ENTRYPOINT [ "/entrypoint.sh" ]
