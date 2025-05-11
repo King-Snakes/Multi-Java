@@ -1,12 +1,18 @@
 FROM debian:bullseye-slim
 LABEL author="King-Snakes" maintainer="MexicanKingSnakes@gmail.com"
 
-ENV DEBIAN_FRONTEND=noninteractive JAVA_DIR=/opt/java USER=container HOME=/home/container
+ENV DEBIAN_FRONTEND=noninteractive
+ENV JAVA_DIR=/opt/java
+ENV USER=container HOME=/home/container
 
-RUN apt-get update -y && apt-get install -y \
-    bash lsof curl jq unzip tar file ca-certificates openssl git \
+RUN apt-get update -y && \
+    apt-get install -y bash lsof curl jq unzip tar file ca-certificates openssl git \
     sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 && \
-    mkdir -p ${JAVA_DIR} && useradd -m -d /home/container ${USER} && \
+    mkdir -p ${JAVA_DIR} && useradd -m -d /home/container ${USER}
+
+# Install Java versions using a shell script
+RUN bash -c '\
+    set -e; \
     for pair in \
       "8 https://github.com/adoptium/temurin8-binaries/releases/download/OpenJDK8U-jdk_aarch64_linux_hotspot_8u402b06/OpenJDK8U-jdk_aarch64_linux_hotspot_8u402b06.tar.gz" \
       "11 https://github.com/adoptium/temurin11-binaries/releases/download/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.22_7/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.22_7.tar.gz" \
@@ -14,13 +20,14 @@ RUN apt-get update -y && apt-get install -y \
       "17 https://github.com/adoptium/temurin17-binaries/releases/download/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.10_7/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.10_7.tar.gz" \
       "21 https://github.com/adoptium/temurin21-binaries/releases/download/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.2_13/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.2_13.tar.gz" \
       "22 https://github.com/adoptium/temurin22-binaries/releases/download/OpenJDK22U-jdk_aarch64_linux_hotspot_22_36/OpenJDK22U-jdk_aarch64_linux_hotspot_22_36.tar.gz"; do \
-        ver=$(echo $pair | cut -d' ' -f1) && \
-        url=$(echo $pair | cut -d' ' -f2-) && \
-        curl -fsSL -o /tmp/java${ver}.tar.gz "$url" && \
-        mkdir -p ${JAVA_DIR}/java${ver} && \
-        tar -xzf /tmp/java${ver}.tar.gz --strip-components=1 -C ${JAVA_DIR}/java${ver} && \
-        rm /tmp/java${ver}.tar.gz ; \
-    done
+        ver=$(echo $pair | cut -d" " -f1); \
+        url=$(echo $pair | cut -d" " -f2-); \
+        echo "Installing Java $ver..."; \
+        curl -fsSL -o /tmp/java${ver}.tar.gz "$url"; \
+        mkdir -p ${JAVA_DIR}/java${ver}; \
+        tar -xzf /tmp/java${ver}.tar.gz --strip-components=1 -C ${JAVA_DIR}/java${ver}; \
+        rm /tmp/java${ver}.tar.gz; \
+    done'
 
 USER container
 WORKDIR /home/container
