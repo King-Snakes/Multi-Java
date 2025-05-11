@@ -38,4 +38,3 @@ jobs:
           push: true
           tags: |
             ghcr.io/king-snakes/multi-java:latest
-            ghcr.io/king-snakes/multi-java:test
