@@ -1,22 +1,21 @@
 #!/bin/bash
 set -e
 
-# Apply correct Java version from .javaver if it exists
-if [[ -f .javaver ]]; then
-    export JAVA_HOME="/opt/java/java$(cat .javaver)"
-    export PATH="$JAVA_HOME/bin:$PATH"
-    echo "Activated JAVA_HOME: $JAVA_HOME"
-    java -version
-fi
+# Set timezone (default to UTC) and internal IP
+export TZ="${TZ:-UTC}"
+export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2); exit}')
 
-# Check startup string
-if [ -z "${STARTUP}" ]; then
-    echo "STARTUP variable is not set."
-    exit 1
-fi
+# Activate Java version
+JAVA_VER=$(cat /mnt/server/.javaver 2>/dev/null || echo "22")
+export JAVA_HOME="/opt/java/java${JAVA_VER}"
+export PATH="$JAVA_HOME/bin:$PATH"
+echo "Using JAVA_HOME: $JAVA_HOME"
+java -version
 
+# Change to container's working directory
+cd /home/container || exit 1
+
+# Prepare and run startup command
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
-echo "Running startup command:"
-echo "${PARSED}"
-
+printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0m%s\n" "$PARSED"
 exec env ${PARSED}
