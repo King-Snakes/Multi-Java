@@ -5,7 +5,26 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV JAVA_DIR=/opt/java
 
 # Install all dependencies
-RUN apt-get update -y && apt-get install -y \ bash lsof curl jq unzip tar file ca-certificates openssl git \ sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 && \ mkdir -p /opt/java && \ useradd -d /home/container -m container
+RUN apt-get update -y && \
+    apt-get install -y \
+    bash \
+    lsof \
+    curl \
+    jq \
+    unzip \
+    tar \
+    file \
+    ca-certificates \
+    openssl \
+    git \
+    sqlite3 \
+    fontconfig \
+    libfreetype6 \
+    tzdata \
+    iproute2 \
+    libstdc++6 && \
+    mkdir -p /opt/java && \
+    useradd -m -d /home/container container
 
 # Java 8
 RUN curl -fsSL -o /tmp/java8.tar.gz https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_aarch64_linux_hotspot_8u402b06.tar.gz && \
