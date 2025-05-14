@@ -1,42 +1,35 @@
+FROM alpine:3.18
 
-FROM debian:bullseye-slim
 LABEL author="King-Snakes" maintainer="MexicanKingSnakes@gmail.com"
 
-ENV DEBIAN_FRONTEND=noninteractive
 ENV JAVA_DIR=/opt/java
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install hotspot headless JREs and essential tools (slim runtime)
+RUN apk add --no-cache \
     bash lsof curl jq unzip tar file ca-certificates openssl git \
-    sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 && \
-    rm -rf /var/lib/apt/lists/*
+    sqlite sqlite-libs fontconfig ttf-freefont tzdata iproute2 \
+    openjdk8-jre-headless openjdk11-jre-headless openjdk16-jre-headless \
+    openjdk17-jre-headless openjdk21-jre-headless openjdk22-jre-headless
 
+# Organize Java installs under /opt/java
+RUN for v in 8 11 16 17 21 22; do \
+      mkdir -p "${JAVA_DIR}/java${v}"; \
+      mv "/usr/lib/jvm/java-${v}-openjdk" "${JAVA_DIR}/java${v}"; \
+    done \
+ && chown -R root:root "${JAVA_DIR}"
 
-# Multi-arch Java install
-ARG ARCH="$(dpkg --print-architecture)"
-RUN for V in 8 11 16 17 21 22; do \
-      mkdir -p /opt/java/java${V}; \
-      case "$ARCH" in \
-        amd64) url="https://github.com/adoptium/temurin${V}-binaries/releases/download/jdk-${V}.0.0+0/OpenJDK${V}U-jdk_x64_linux_hotspot_${V}.0.0_0.tar.gz" ;; \
-        arm64) url="https://github.com/adoptium/temurin${V}-binaries/releases/download/jdk-${V}.0.0+0/OpenJDK${V}U-jdk_aarch64_linux_hotspot_${V}.0.0_0.tar.gz" ;; \
-        *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
-      esac; \
-      curl -fsSL "$url" -o /tmp/java${V}.tar.gz; \
-      tar -xzf /tmp/java${V}.tar.gz --strip-components=1 -C /opt/java/java${V}; \
-      rm /tmp/java${V}.tar.gz; \
-    done
-
-
-# Create container user
-RUN useradd -m -d /home/container container && \
-    chown -R container:container /opt/java
-
-# Copy and set permissions for entrypoint
-COPY --chown=container:container entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Create the unprivileged 'container' user
+RUN adduser -D -h /home/container container \
+ && chown -R container:container "${JAVA_DIR}"
 
 USER container
 WORKDIR /home/container
 
+# Copy entrypoint and set execute permissions
+COPY --chown=container:container entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Env for Pterodactyl
 ENV USER=container HOME=/home/container
 
-CMD ["/bin/bash", "/entrypoint.sh"]
+CMD ["/bin/sh", "/entrypoint.sh"]
