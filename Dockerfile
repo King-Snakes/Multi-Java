@@ -15,9 +15,8 @@ RUN apk add --no-cache \
       openjdk11-jre-headless \
       openjdk16-jre-headless \
       openjdk17-jre-headless \
-      openjdk21-jre-headless \
-      --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing \
-        openjdk22-jre-headless && \
+      --repository https://dl-cdn.alpinelinux.org/alpine/edge/community openjdk21-jre-headless \
+      --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing openjdk22-jre-headless && \
     mkdir -p "$JAVA_DIR" && \
     for v in $JAVA_VERSIONS; do \
       mv /usr/lib/jvm/*${v}*-openjdk "$JAVA_DIR/java$v"; \
