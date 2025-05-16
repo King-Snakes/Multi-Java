@@ -2,9 +2,10 @@ FROM alpine:3.18
 LABEL author="King-Snakes" maintainer="MexicanKingSnakes@gmail.com"
 
 ENV JAVA_DIR=/opt/java \
-    HOME=/home/container
+    HOME=/home/container \
+    JAVA_VERSION=22
 
-RUN apk add --no-cache \
+RUN apk add --no-cache su-exec \
       bash lsof curl jq unzip tar file ca-certificates openssl git \
       sqlite sqlite-libs fontconfig ttf-freefont tzdata iproute2 \
       openjdk8-jre-base openjdk11-jre-headless openjdk16-jre-headless \
@@ -20,9 +21,8 @@ RUN apk add --no-cache \
     done && \
     adduser -D -h "$HOME" container && \
     chown -R container:container "$JAVA_DIR"
-
+    
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-USER container
-WORKDIR $HOME
+WORKDIR /home/container
 CMD ["/entrypoint.sh"]
