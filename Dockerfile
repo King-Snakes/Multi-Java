@@ -21,7 +21,7 @@ RUN apk add --no-cache su-exec \
     done && \
     adduser -D -h "$HOME" container && \
     chown -R container:container "$JAVA_DIR"
-    
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 WORKDIR /home/container
