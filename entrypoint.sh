@@ -19,7 +19,7 @@ JAVA_VER=$(cat .javaver 2>/dev/null || echo "${JAVA_VERSION}")
 export JAVA_HOME="${JAVA_DIR}/java${JAVA_VER}"
 export PATH="${JAVA_HOME}/bin:${PATH}"
 
-# 2.2) Optional diagnostics
+# 2.2) Diagnostics (optional)
 echo "Using JAVA_HOME: $JAVA_HOME"
 printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0mjava -version\n"
 java -version
