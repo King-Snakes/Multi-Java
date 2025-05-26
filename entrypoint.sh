@@ -2,7 +2,6 @@
 set -Eeuo pipefail
 
 # ─── 0) PRIME A DEFAULT JAVA FOR THE INSTALL ──────────────────────────────────
-# Ensure 'java' exists when install.sh runs (defaults to JAVA_VERSION, e.g. 22)
 export JAVA_HOME="${JAVA_DIR}/java${JAVA_VERSION}"
 export PATH="${JAVA_HOME}/bin:${PATH}"
 
@@ -25,16 +24,21 @@ echo "Using JAVA_HOME: $JAVA_HOME"
 printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0mjava -version\n"
 java -version
 
-# 2.3) Preserve timezone & get internal Docker IP
+# 2.3) Preserve timezone & internal Docker IP
 export TZ=${TZ:-UTC}
 export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 
-# 2.4) Expand Pterodactyl’s STARTUP template into a real command
+# 2.4) Expand Pterodactyl’s STARTUP template
 PARSED=$(echo "${STARTUP}"         \
   | sed -e 's/{{/${/g' -e 's/}}/}/g' \
   | eval echo "\$(cat -)")
 printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0m%s\n" "$PARSED"
 
 # ─── 3) LAUNCH ─────────────────────────────────────────────────────────────────
-# Try to drop to the non-root 'container' user; if su-exec fails, run as root
-exec su-exec container:container env ${PARSED} || exec env ${PARSED}
+# Try to drop privileges to 'container'; if that fails, run as root
+if su-exec container:container env ${PARSED}; then
+  exit 0
+else
+  echo "Warning: su-exec failed, launching as root"
+  exec env ${PARSED}
+fi
