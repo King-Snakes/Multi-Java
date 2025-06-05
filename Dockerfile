@@ -10,8 +10,10 @@ RUN apk add --no-cache su-exec \
       sqlite sqlite-libs fontconfig ttf-freefont tzdata iproute2 \
       openjdk8-jre-base openjdk11-jre-headless openjdk16-jre-headless \
       openjdk17-jre-headless \
-      --repository https://dl-cdn.alpinelinux.org/alpine/edge/community openjdk21-jre-headless \
-      --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing openjdk22-jre-headless && \
+      --repository https://dl-cdn.alpinelinux.org/alpine/edge/community \
+        openjdk21-jre-headless \
+      --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+        openjdk22-jre-headless && \
     mkdir -p "${JAVA_DIR}" && \
     for d in \
       java-1.8-openjdk java-11-openjdk java-16-openjdk \
