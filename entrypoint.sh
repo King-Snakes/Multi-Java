@@ -15,7 +15,8 @@ fi
 cd /home/container
 
 # 2.1) Pick the recorded JRE version (or default)
-JAVA_VER=$(cat .javaver 2>/dev/null || echo "${JAVA_VERSION}")
+JAVA_VER="$(cat .javaver 2>/dev/null || true)"
+[[ -n "$JAVA_VER" ]] || JAVA_VER="$JAVA_VERSION"
 export JAVA_HOME="${JAVA_DIR}/java${JAVA_VER}"
 export PATH="${JAVA_HOME}/bin:${PATH}"
 
