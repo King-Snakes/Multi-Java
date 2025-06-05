@@ -14,7 +14,8 @@ fi
 # ─── 2) START PHASE ────────────────────────────────────────────────────────────
 cd /home/container
 
-# 2.1) Pick the recorded JRE version (or default)
+# 2.1) Pick the recorded JRE version.
+#      Reads .javaver if non-empty, otherwise uses $JAVA_VERSION.
 JAVA_VER="$(cat .javaver 2>/dev/null || true)"
 [[ -n "$JAVA_VER" ]] || JAVA_VER="$JAVA_VERSION"
 export JAVA_HOME="${JAVA_DIR}/java${JAVA_VER}"
