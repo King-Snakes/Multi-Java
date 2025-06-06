@@ -38,7 +38,7 @@ printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0m%s\n" "$PARSED"
 
 # ─── 3) LAUNCH ─────────────────────────────────────────────────────────────────
 # Try dropping to 'container' user; if su-exec fails, fall back to root
-if su-exec container:container bash -lc "${PARSED}"; then
+if su-exec container:container bash -c "${PARSED}"; then
   exit 0
 else
   echo "Warning: su-exec failed, launching as root"
