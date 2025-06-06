@@ -40,4 +40,4 @@ jobs:
           file: OpenJDK/${{ matrix.variant }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/king-snakes/Multi-OpenJDK:${{ matrix.variant }}
+          tags: ghcr.io/king-snakes/multi-openjdk:${{ matrix.variant }}

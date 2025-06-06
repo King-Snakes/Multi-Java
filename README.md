@@ -64,12 +64,12 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/king-snakes/Multi-OpenJDK:Headless
-            ghcr.io/king-snakes/Multi-OpenJDK:JRE
-            ghcr.io/king-snakes/Multi-OpenJDK:JDK
+            ghcr.io/king-snakes/multi-openjdk:Headless
+            ghcr.io/king-snakes/multi-openjdk:JRE
+            ghcr.io/king-snakes/multi-openjdk:JDK
 ```
 
 The resulting images are tagged as:
-- `ghcr.io/king-snakes/Multi-OpenJDK:Headless`
-- `ghcr.io/king-snakes/Multi-OpenJDK:JRE`
-- `ghcr.io/king-snakes/Multi-OpenJDK:JDK`
+- `ghcr.io/king-snakes/multi-openjdk:Headless`
+- `ghcr.io/king-snakes/multi-openjdk:JRE`
+- `ghcr.io/king-snakes/multi-openjdk:JDK`
