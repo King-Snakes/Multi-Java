@@ -5,9 +5,12 @@ This container provides multiple Java runtimes for use with Pterodactyl eggs or 
 ## Building and running
 
 ```bash
-docker build -t multi-java -f OpenJDK/Headless/Dockerfile .
+# Build each image
+docker build -t Multi-OpenJDK:Headless -f OpenJDK/Headless/Dockerfile .
+docker build -t Multi-OpenJDK:JRE -f OpenJDK/JRE/Dockerfile .
+docker build -t Multi-OpenJDK:JDK -f OpenJDK/JDK/Dockerfile .
 # Example run showing the selected JRE
-docker run --rm -it -e STARTUP="java -version" multi-java
+docker run --rm -it -e STARTUP="java -version" Multi-OpenJDK:Headless
 ```
 
 ## Configuration
@@ -54,14 +57,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_PAT }}
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Images
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/king-snakes/multi-java:latest
+            ghcr.io/king-snakes/Multi-OpenJDK:Headless
+            ghcr.io/king-snakes/Multi-OpenJDK:JRE
+            ghcr.io/king-snakes/Multi-OpenJDK:JDK
 ```
 
-The resulting image is tagged as `ghcr.io/king-snakes/multi-java:latest`.
+The resulting images are tagged as:
+- `ghcr.io/king-snakes/Multi-OpenJDK:Headless`
+- `ghcr.io/king-snakes/Multi-OpenJDK:JRE`
+- `ghcr.io/king-snakes/Multi-OpenJDK:JDK`
