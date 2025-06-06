@@ -42,5 +42,5 @@ if su-exec container:container bash -c "${PARSED}"; then
   exit 0
 else
   echo "Warning: su-exec failed, launching as root"
-  exec bash -lc "${PARSED}"
+  exec bash -c "${PARSED}"
 fi
