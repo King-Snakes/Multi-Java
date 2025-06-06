@@ -5,7 +5,7 @@ ENV JAVA_DIR=/opt/java \
     HOME=/home/container \
     JAVA_VERSION=22
 
-RUN apk add --no-cache su-exec \
+RUN apk add --no-cache libstdc++ su-exec \
       bash lsof curl jq unzip tar file ca-certificates openssl git \
       sqlite sqlite-libs fontconfig ttf-freefont tzdata iproute2 \
       openjdk8-jre-base openjdk11-jre-headless openjdk16-jre-headless \
