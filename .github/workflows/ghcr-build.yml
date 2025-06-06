@@ -1,4 +1,4 @@
-name: Build and Push Multi-Arch Docker Image to GHCR
+name: Build and Push Multi-Arch Docker Images to GHCR
 
 on:
   workflow_dispatch:
@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [Headless, JRE, JDK]
     permissions:
       contents: read
       packages: write
@@ -30,12 +33,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push ${{ matrix.variant }} Image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: OpenJDK/Headless/Dockerfile
+          file: OpenJDK/${{ matrix.variant }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            ghcr.io/king-snakes/multi-java:latest
+          tags: ghcr.io/king-snakes/multi-openjdk:${{ matrix.variant }}
