@@ -5,7 +5,7 @@ This container provides multiple Java runtimes for use with Pterodactyl eggs or 
 ## Building and running
 
 ```bash
-docker build -t multi-java .
+docker build -t multi-java -f OpenJDK/Headless/Dockerfile .
 # Example run showing the selected JRE
 docker run --rm -it -e STARTUP="java -version" multi-java
 ```
